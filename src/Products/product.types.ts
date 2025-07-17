@@ -3,6 +3,7 @@ import { Result } from "../types/result"
 import { Request, Response } from "express"
 
 export type Product = Prisma.ProductGetPayload<{}>
+// gg
 
 export interface ProductRepository {
 	getAllProducts: () => Promise<Result<Product[]>>
