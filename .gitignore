@@ -36,6 +36,8 @@ typings/
 
 .grunt/
 .lock-wscript
+/prisma/migrations
+/prisma/db
 
 .prettierrc
 /src/generated/prisma
