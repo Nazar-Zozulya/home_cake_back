@@ -4,6 +4,11 @@ import { Request, Response } from "express"
 
 export type Product = Prisma.ProductGetPayload<{}>
 
+export type ProductInCart = {
+	id: number
+	count: number
+}
+
 export interface ProductRepository {
 	getAllProducts: () => Promise<Result<Product[]>>
 	createProduct: (product: Product) => Promise<Result<Product>>

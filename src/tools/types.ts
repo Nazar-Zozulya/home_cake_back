@@ -1,6 +1,7 @@
 // Email Service
 
 import { Product } from "../generated/prisma"
+import { ProductInCart } from "../Products/product.types"
 import { Result } from "../types/result"
 
 export interface UserInfo {
@@ -19,16 +20,16 @@ interface SelfOrderInfo {
 interface CartOrderInfo {
     type: "cart"
 	userInfo: UserInfo
-    products: Product[]
-	takeProductInfo: CartPickUpProduct | CartDelivaryProduct
+    products: ProductInCart[]
+	takeProductInfo?: CartDelivaryProduct
 }
 
-interface CartPickUpProduct {
-	type: "pickup"
-}
+// export interface CartPickUpProduct {
+	// type: "pickup"
+// }
 
-interface CartDelivaryProduct {
-	type: "delivary"
+export interface CartDelivaryProduct {
+	// type: "delivary"
 	adress: string
 	data: number
 	time: number
