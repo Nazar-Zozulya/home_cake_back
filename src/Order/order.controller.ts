@@ -12,7 +12,7 @@ export const orderController: OrderController = {
 
     orderFromCart: async (req, res) => {
         const { user, products, delivaryInfo } = req.body
-        const result = await orderService.orderFromCart(user, products. delivaryInfo)
+        const result = await orderService.orderFromCart(user, products, delivaryInfo)
 
         res.json(result)
     },

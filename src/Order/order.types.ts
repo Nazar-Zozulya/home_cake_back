@@ -7,14 +7,14 @@ import { Request, Response } from "express"
 
 interface DeliveryInfo {
     adress: string
-	data: number
-	time: number
+	data: string
+	time: string
 }
 
 
 export interface OrderService {
     orderFromSelf: (user: UserInfo, descriptionOrder: string) => Promise<Result<string>>
-    orderFromCart: (user: UserInfo, products: ProductInCart[], deliveryInfo?: DeliveryInfo) => Promise<Result<string>>
+    orderFromCart: (user: UserInfo, products: ProductInCart[], deliveryInfo?: DeliveryInfo | undefined) => Promise<Result<string>>
     verifyOrder: (token: string) => Promise<Result<string>>
 }
 

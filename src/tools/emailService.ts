@@ -3,6 +3,7 @@ import * as nodemailer from "nodemailer"
 import { sign } from "jsonwebtoken"
 import { success, error } from "./result"
 import { userInfo } from "os"
+import { title } from "process"
 
 const transporter = nodemailer.createTransport({
 	service: "gmail",
@@ -45,38 +46,43 @@ export const EmailService: EmailServiceTypes = {
 			// f"Номер телефону: {data['phone']}\n"
 			// f"Пошта: {data['email']}\n"
 			// f"Заказ:\n{data['describeOrder']}"
-		}
+		} else if (orderInfo.type === "cart") {
+			text = `
+			Ім'я: ${orderInfo.userInfo.name} ${orderInfo.userInfo.surname}
+			Номер телефону: ${orderInfo.userInfo.phone}
+			Пошта: ${orderInfo.userInfo.email}
 
-		else if (orderInfo.type === "cart") {
-			text = `Ім'я: ${orderInfo.userInfo.name} ${
-				orderInfo.userInfo.name
-			} \n
-                Номер телефону: ${orderInfo.userInfo.phone} \n
-                Пошта: ${orderInfo.userInfo.email} \n
+			${
+				orderInfo.takeProductInfo
+				? `
+			Адреса: ${orderInfo.takeProductInfo.adress}
+			Дата: ${orderInfo.takeProductInfo.data}
+			Час: ${orderInfo.takeProductInfo.time}
+			`
+					: null
+			}
 
-                ${
-					orderInfo.takeProductInfo.type === "delivary"
-						? `
-                    Адреса: ${orderInfo.takeProductInfo.adress} \n
-                    Дата: ${orderInfo.takeProductInfo.data} \n
-                    Час: ${orderInfo.takeProductInfo.time} \n
-                    `
-						: undefined
-				}
+			Заказ: 
+		
+			${orderInfo.products.map((p) => {
+				return `
+			${p.name}
+			Загальна: Вартість${p.price}
+			Кількість ${p.count}
+					`
+			})}
 
-                Заказ: \n
-                ${orderInfo.products}
-
-            `
+		`
 		}
 		const mailOptions = {
 			from: process.env.EMAIL_USER,
-			to: orderInfo.userInfo.email,
+			to: "likeemangames@gmail.com",
 			subject: "Підтвердіть пошту",
+			title: "Нове замовлення",
 			text,
 		}
 
-        try {
+		try {
 			const info = await transporter.sendMail(mailOptions)
 			console.log("Письмо отправлено:", info.response)
 			return success("Письмо отправленно")

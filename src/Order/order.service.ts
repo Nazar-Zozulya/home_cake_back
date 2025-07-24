@@ -1,46 +1,87 @@
 // import { error } from "";
-import { OrderService } from "./order.types";
-import { EmailService } from "../tools/emailService";
-import { sign } from 'jsonwebtoken'
-import { error } from "../tools/result";
-
-
+import { OrderService } from "./order.types"
+import { EmailService } from "../tools/emailService"
+import { sign } from "jsonwebtoken"
+import { error } from "../tools/result"
+import { productsInCartToProducts } from "../tools/productsInCartToProducts"
 
 export const orderService: OrderService = {
-    orderFromSelf: async (user, descriptionOrder) => {
+	orderFromSelf: async (user, descriptionOrder) => {
+		const token = sign(
+			{ email: user.email },
+			process.env.SECRET_KEY ?? "secret",
+			{ expiresIn: "1h" }
+		)
 
-        const token = sign(user.email, process.env.SECRET_KEY ?? '', { expiresIn: "1d" })
+		const verification_link = `http://127.0.0.1:8000/api/order/${user.email}/${token}`
 
-        const verification_link = `http://127.0.0.1:8000/${user.email}/${token}`
+		const newStorage = EmailService.storage.set(token, {
+			type: "self",
+			userInfo: user,
+			describeOrder: descriptionOrder,
+		})
 
-        const newStorage = EmailService.storage.set(token, {type: 'self', userInfo: user, describeOrder: descriptionOrder} )
-        
-        const emailResult = await EmailService.sendVerifyfOrderMail(verification_link, user)
+		const emailResult = await EmailService.sendVerifyfOrderMail(
+			verification_link,
+			user
+		)
 
+		return emailResult
+	},
 
-        return emailResult
-    },
+	orderFromCart: async (user, products, delivaryInfo?) => {
+		const token = sign(
+			{ email: user.email },
+			process.env.SECRET_KEY ?? "secret",
+			{ expiresIn: "1h" }
+		)
 
-    orderFromCart: async (user, products, delivaryInfo? ) => {
+		const verification_link = `http://127.0.0.1:8000/api/order/${user.email}/${token}`
 
-        const token = sign(user.email, process.env.SECRET_KEY ?? '', { expiresIn: "1d" })
+		const newStorage = EmailService.storage.set(token, {
+			type: "cart",
+			userInfo: user,
+			products,
+			takeProductInfo: delivaryInfo,
+		})
 
-        const verification_link = `http://127.0.0.1:8000/${user.email}/${token}`
+		const emailResult = await EmailService.sendVerifyfOrderMail(
+			verification_link,
+			user
+		)
 
-        const newStorage = EmailService.storage.set(token, {type: 'cart', userInfo: user, products, takeProductInfo: delivaryInfo} )
+		return emailResult
+	},
 
-        const emailResult = await EmailService.sendVerifyfOrderMail(verification_link, user)
+	verifyOrder: async (token) => {
+		const storageData = EmailService.storage.get(token)
 
-        return emailResult
-    },
+		if (!storageData)
+			return error("not found storage data or invalid token")
 
-    verifyOrder: async (token) => {
-        const storageData = EmailService.storage.get(token)
+		console.log("storage data: ", storageData)
 
-        if (!storageData) return error("bad data")
+		let orderedProducts
 
-        const emailResult = await EmailService.SendOrderToOwner(storageData)
+		if (storageData.type === "cart") {
+			orderedProducts = productsInCartToProducts(storageData.products)
 
-        return emailResult
-    }
+            const newStorageData = {
+                ...storageData,
+                products: orderedProducts
+            }
+
+			const emailResult = await EmailService.SendOrderToOwner(newStorageData)
+
+			const deletedStorage = EmailService.storage.delete(token)
+
+			return emailResult
+		} else {
+			const emailResult = await EmailService.SendOrderToOwner(storageData)
+
+			const deletedStorage = EmailService.storage.delete(token)
+
+			return emailResult
+		}
+	},
 }
