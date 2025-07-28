@@ -9,6 +9,10 @@ export type ProductInCart = {
 	count: number
 }
 
+export interface ProductWithCount extends Product {
+	count: number
+}
+
 export interface ProductRepository {
 	getAllProducts: () => Promise<Result<Product[]>>
 	createProduct: (product: Product) => Promise<Result<Product>>

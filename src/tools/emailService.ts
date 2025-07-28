@@ -59,7 +59,7 @@ export const EmailService: EmailServiceTypes = {
 			Дата: ${orderInfo.takeProductInfo.data}
 			Час: ${orderInfo.takeProductInfo.time}
 			`
-					: null
+					: ''
 			}
 
 			Заказ: 

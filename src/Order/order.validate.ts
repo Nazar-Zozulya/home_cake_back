@@ -63,14 +63,12 @@ export const OrderValidation = {
 				.max(50, "Ваша номер телефону занадто великий"),
 		}),
 		delivaryInfo: yup.object({
-			addres: yup.string().required("Вкажіть вашу адресу"),
+			addres: yup.string(),
 			data: yup
 				.string()
-				.required("Вкажіть дату коли ми вам привеземо замовлення")
 				.matches(dataRegExp, "Некорректна дата"),
 			time: yup
 				.string()
-				.required("Вкажіть час коли ми вам привеземо замовлення")
 				.matches(timeRegExp, "Некорректний час"),
 		}),
 	}),

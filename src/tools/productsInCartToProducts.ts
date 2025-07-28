@@ -1,12 +1,12 @@
 import { Product } from "../generated/prisma";
 import { productRepository } from "../Products/product.repository";
-import { ProductInCart } from "../Products/product.types";
+import { ProductInCart, ProductWithCount } from "../Products/product.types";
 
 
 
 
 
-export async function productsInCartToProducts(data: ProductInCart[]): Promise<(Product & { count: number })[]> {
+export async function productsInCartToProducts(data: ProductInCart[]): Promise<ProductWithCount[]> {
     const products = await productRepository.getAllProducts()
 
     if (products.status === "error") throw new Error("Продукти не знайденні")

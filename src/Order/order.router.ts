@@ -7,12 +7,12 @@ const router = Router()
 
 router.post(
 	"/self",
-	validateMiddleware(OrderValidation.selfOrder),
+	// validateMiddleware(OrderValidation.selfOrder),
 	orderController.orderFromSelf
 )
 router.post(
 	"/cart",
-	validateMiddleware(OrderValidation.cartOrder),
+	// validateMiddleware(OrderValidation.cartOrder),
 	orderController.orderFromCart
 )
 router.get("/:email/:token", orderController.verifyOrder)

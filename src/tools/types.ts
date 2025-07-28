@@ -1,7 +1,7 @@
 // Email Service
 
 import { Product } from "../generated/prisma"
-import { ProductInCart } from "../Products/product.types"
+import { ProductInCart, ProductWithCount } from "../Products/product.types"
 import { Result } from "../types/result"
 
 export interface UserInfo {
@@ -20,12 +20,12 @@ interface SelfOrderInfo {
 interface CartOrderInfo {
 	type: "cart"
 	userInfo: UserInfo
-	products: ProductInCart[]
+	products: ProductWithCount[]
 	takeProductInfo?: CartDelivaryProduct
 }
 
 interface CartOrderInfoToOwner extends Omit<CartOrderInfo, "products"> {
-	products: (Product & { count: number })[]
+	products: ProductWithCount[]
 }
 // export interface CartPickUpProduct {
 // type: "pickup"

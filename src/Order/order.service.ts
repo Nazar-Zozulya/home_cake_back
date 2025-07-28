@@ -38,12 +38,16 @@ export const orderService: OrderService = {
 
 		const verification_link = `http://127.0.0.1:8000/api/order/${user.email}/${token}`
 
+		const fullProducts = await productsInCartToProducts(products)
+
 		const newStorage = EmailService.storage.set(token, {
 			type: "cart",
 			userInfo: user,
-			products,
+			products: fullProducts,
 			takeProductInfo: delivaryInfo,
 		})
+		
+		console.log("Storage: ",EmailService.storage.get(token))
 
 		const emailResult = await EmailService.sendVerifyfOrderMail(
 			verification_link,
@@ -61,27 +65,11 @@ export const orderService: OrderService = {
 
 		console.log("storage data: ", storageData)
 
-		let orderedProducts
 
-		if (storageData.type === "cart") {
-			orderedProducts = productsInCartToProducts(storageData.products)
+		const emailResult = await EmailService.SendOrderToOwner(storageData)
 
-            const newStorageData = {
-                ...storageData,
-                products: orderedProducts
-            }
+		const deletedStorage = EmailService.storage.delete(token)
 
-			const emailResult = await EmailService.SendOrderToOwner(newStorageData)
-
-			const deletedStorage = EmailService.storage.delete(token)
-
-			return emailResult
-		} else {
-			const emailResult = await EmailService.SendOrderToOwner(storageData)
-
-			const deletedStorage = EmailService.storage.delete(token)
-
-			return emailResult
-		}
+		return emailResult
 	},
 }

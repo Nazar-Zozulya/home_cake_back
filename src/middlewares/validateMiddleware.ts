@@ -14,7 +14,7 @@ export function validateMiddleware(schema: AnyObjectSchema) {
 			});
 			next();
 		} catch (err) {
-			// console.log(err);
+			console.log(err);
             next(error(`${err}`))
 		}
 	};
