@@ -13,7 +13,7 @@ export const orderService: OrderService = {
 			{ expiresIn: "1h" }
 		)
 
-		const verification_link = `http://127.0.0.1:8000/api/order/${user.email}/${token}`
+		const verification_link = `${process.env.FRONTEND_SERVER}/${user.email}/${token}/self`
 
 		const newStorage = EmailService.storage.set(token, {
 			type: "self",
@@ -36,7 +36,7 @@ export const orderService: OrderService = {
 			{ expiresIn: "1h" }
 		)
 
-		const verification_link = `http://127.0.0.1:8000/api/order/${user.email}/${token}`
+		const verification_link = `${process.env.FRONTEND_SERVER}/${user.email}/${token}/cart`
 
 		const fullProducts = await productsInCartToProducts(products)
 
@@ -46,8 +46,8 @@ export const orderService: OrderService = {
 			products: fullProducts,
 			takeProductInfo: delivaryInfo,
 		})
-		
-		console.log("Storage: ",EmailService.storage.get(token))
+
+		console.log("Storage: ", EmailService.storage.get(token))
 
 		const emailResult = await EmailService.sendVerifyfOrderMail(
 			verification_link,
@@ -64,7 +64,6 @@ export const orderService: OrderService = {
 			return error("not found storage data or invalid token")
 
 		console.log("storage data: ", storageData)
-
 
 		const emailResult = await EmailService.SendOrderToOwner(storageData)
 
